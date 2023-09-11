@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: 'rabbitmq:3-management-alpine'
+    hostname: 'rabbitmq'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - rabbitnet
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: cc_project
+    volumes:
+      - ./data:/data/db
+  producer:
+    build: ./producer
+    ports:
+      - '5000:5000'
+    environment:
+        RABBITMQ_HOST: ${RABBITMQ_HOST}
+        PYTHONUNBUFFERED : 1
+  
+  consumer_one:
+    build: ./consumer_one
+    environment:
+        RABBITMQ_HOST: ${RABBITMQ_HOST}
+        PYTHONUNBUFFERED : 1
+
+  consumer_two:
+    build: ./consumer_two
+    environment:
+        RABBITMQ_HOST: ${RABBITMQ_HOST}
+        PYTHONUNBUFFERED : 1
+  
+  consumer_three:
+    build: ./consumer_three
+    environment:
+        RABBITMQ_HOST: ${RABBITMQ_HOST}
+        PYTHONUNBUFFERED : 1
+
+  consumer_four:
+    build: ./consumer_four
+    environment:
+        RABBITMQ_HOST: ${RABBITMQ_HOST}
+        PYTHONUNBUFFERED : 1
+
+
+networks:
+  rabbitnet:
+    external: true
+
+
